@@ -1,0 +1,30 @@
+# Compiled Executables
+/simple-proxy
+
+# Object Files (if you were to use a Makefile with intermediate .o files)
+*.o
+
+# Configuration files that might be local or contain sensitive data
+# The installed config.cfg is in /etc/simple-proxy/, but local changes
+# might be made or it could be a template.
+config.cfg
+
+# Systemd Service file (this will be copied to /etc/systemd/system,
+# so the one in the repo is just a template/source)
+simple-proxy.service
+simple-porxy.service # Include the typo version just in case it lingers
+
+# Logs
+*.log
+
+# Build directories
+build/
+
+# IDE/Editor specific files
+.idea/
+.vscode/
+*.swp
+*.bak
+*~
+.DS_Store
+Thumbs.db
