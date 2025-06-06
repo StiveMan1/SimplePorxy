@@ -15,7 +15,7 @@
 
 #define packet_size 1024 * 1024
 char buffer[packet_size];
-char *config_file = "/etc/alisa_proxy/config.cfg";
+char *config_file = "/etc/simple-proxy/config.cfg";
 
 void parse_args(int argc, char **argv) {
     for (int i = 0; i < argc; i++) {
