@@ -1,0 +1,17 @@
+[Unit]
+Description=Simple Proxy
+After=network-online.target rsyslog.service
+Wants=network-online.target
+
+[Service]
+PIDFile=/etc/simple-proxy/proxy.pid
+KillMode=process
+Restart=always
+Type=simple
+
+ExecStart=/usr/bin/simple-proxy
+ExecStop=kill -HUP $MAINPID && /usr/bin/simple-proxy
+ExecReload=kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
