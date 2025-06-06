@@ -1,7 +1,3 @@
-//
-// Created by stive on 9/5/24.
-//
-
 #ifndef ALISA_PROXY_CONFIG_H
 #define ALISA_PROXY_CONFIG_H
 
@@ -49,6 +45,8 @@ struct list_threads {
         struct list_threads_elm *next;
     } *first, *last;
 };
+
+extern volatile int running;
 
 
 #endif //ALISA_PROXY_CONFIG_H

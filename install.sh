@@ -51,7 +51,7 @@ echo "Compilation successful."
 echo "Copying files to system locations..."
 cp config.cfg /etc/simple-proxy/config.cfg
 cp simple-proxy /usr/bin/simple-proxy
-cp simple-porxy.service /etc/systemd/system/simple-proxy.service
+cp simple-proxy.service /etc/systemd/system/simple-proxy.service
 echo "Files copied."
 
 # --- Systemd Setup ---

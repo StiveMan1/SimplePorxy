@@ -29,32 +29,31 @@ void parse_args(int argc, char **argv) {
     }
 }
 struct proxy_client *new_client(socket_t cli_socket, socket_t des_socket) {
-    struct proxy_client *client = calloc(1, sizeof(*client));
-    client->cli_socket = cli_socket;
-    client->des_socket = des_socket;
-    return client;
+    struct proxy_client *cli = calloc(1, sizeof(struct proxy_client));
+    cli->cli_socket = cli_socket;
+    cli->des_socket = des_socket;
+    return cli;
 }
 
 void close_client(struct proxy_client *cli) {
+    if (cli == NULL) return;
+
     close(cli->cli_socket);
     close(cli->des_socket);
+
+    free(cli);
 }
 
 void proxy_clients_resize(struct clients_list *res, size_t size) {
     if (res->data == NULL && size) {
         res->mx_size = size;
         res->data = malloc(size * sizeof(struct proxy_client *));
-        if (res->data != NULL) for (size_t i = 0; i < size + 1; i++) res->data[i] = NULL;
     } else if (res->mx_size < size) {
         res->data = realloc(res->data, size * 2 * sizeof(struct proxy_client *));
-        if (res->data != NULL) for (size_t i = res->mx_size, l = size * 2; i < l + 1; i++) res->data[i] = NULL;
         res->mx_size = size * 2;
     }
-    if (res->size > size)
-        for (size_t i = size, l = res->size; i < l; i++) {
-            close_client(res->data[i]);
-            res->data[i] = NULL;
-        }
+    for (size_t i = size, l = res->size; i < l; i++) res->data[i] = NULL;
+    for (size_t i = res->size, l = size; i < l; i++) close_client(res->data[i]);
     res->size = size;
 }
 
@@ -142,7 +141,7 @@ void *do_server(void *arg) {
     socket_t nfds, cli_socket, des_socket;
 
     server_open(server);
-    while (server->socket != -1) {
+    while (running && server->socket != -1) {
         nfds = epoll_wait(server->epoll, &ev, 1, -1);
         if (nfds <= 0) continue;
 
@@ -180,6 +179,11 @@ struct proxy_server *parse_server(config_setting_t *proxy) {
     memset(serv, 0, sizeof(*serv));
     serv->socket = -1;
     serv->epoll = -1;
+
+    serv->config.domain = AF_INET;
+    serv->config.service = SOCK_STREAM;
+    serv->config.protocol = IPPROTO_TCP;
+    serv->config.interface = INADDR_ANY; // 0.0.0.0
 
     config_setting_lookup_int(proxy, "domain", &serv->config.domain);
     config_setting_lookup_int(proxy, "service", &serv->config.service);
